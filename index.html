@@ -402,7 +402,20 @@
         </div>
 
         <div class="button-group">
-            <button class="btn btn-add-row" onclick="addNewRow()">+ Add New Row</button>
+            <button class="btn btn-add-row" onclick="addNewRow()">+ Add 1 Row</button>
+            <div style="display: flex; gap: 10px; align-items: center; flex: 1; min-width: 180px;">
+                <label for="rowCount" style="font-size: 13px; color: #555; white-space: nowrap;">Add multiple:</label>
+                <select id="rowCount" style="width: 60px; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 13px;">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                </select>
+                <button class="btn btn-add-row" onclick="addMultipleRows()" style="flex: 0; min-width: 100px;">Add</button>
+            </div>
         </div>
 
         <div class="reported-by-section">
@@ -572,6 +585,22 @@
 
             tbody.appendChild(row);
             document.getElementById('emptyState').style.display = 'none';
+        }
+
+        // Add multiple rows
+        function addMultipleRows() {
+            const rowCount = parseInt(document.getElementById('rowCount').value);
+            
+            if (rowCount < 1 || rowCount > 100) {
+                showAlert('Please select a number between 1 and 100', 'error');
+                return;
+            }
+
+            for (let i = 0; i < rowCount; i++) {
+                addNewRow();
+            }
+
+            showAlert(`✓ Added ${rowCount} rows!`, 'success');
         }
 
         // Delete row
