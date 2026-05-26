@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Huddle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #f8f9fb 100%);
+            padding: 16px;
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+            padding: 20px 0;
+        }
+
+        .header h1 {
+            font-size: clamp(24px, 5vw, 36px);
+            color: #1a1a1a;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-wrapper {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 12px 8px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 50px;
+            font-size: 13px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #3b82f6;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        .delete-btn:active {
+            transform: scale(0.98);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .btn-add-row {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-add-row:hover {
+            background: #059669;
+        }
+
+        .btn-add-row:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #2563eb;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .reported-by-section {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .reported-by-section label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .reported-by-wrapper {
+            display: flex;
+            gap: 10px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .reported-by-wrapper select,
+        .reported-by-wrapper input[type="text"] {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fcd34d;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .form-wrapper {
+                padding: 16px;
+            }
+
+            th, td {
+                padding: 10px 6px;
+                font-size: 12px;
+            }
+
+            input[type="text"],
+            input[type="email"],
+            select,
+            textarea {
+                padding: 6px;
+                font-size: 13px;
+            }
+
+            textarea {
+                min-height: 40px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                min-width: unset;
+            }
+
+            .reported-by-wrapper {
+                flex-direction: column;
+            }
+
+            .reported-by-wrapper select,
+            .reported-by-wrapper input[type="text"] {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                margin-bottom: 20px;
+                padding: 16px 0;
+            }
+
+            .header h1 {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+
+            .form-wrapper {
+                padding: 12px;
+                border-radius: 6px;
+            }
+
+            th, td {
+                padding: 8px 4px;
+                font-size: 11px;
+            }
+
+            .delete-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+            }
+
+            .btn {
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            .reported-by-section {
+                padding: 12px;
+            }
+
+            .alert {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Team Huddle</h1>
+            <p>Daily team standup form</p>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="form-wrapper">
+            <div class="table-responsive">
+                <table id="huddleTable">
+                    <thead>
+                        <tr>
+                            <th>Team Member</th>
+                            <th>Role</th>
+                            <th>Feeling</th>
+                            <th>Resource Ready</th>
+                            <th>Help Needed</th>
+                            <th>Self Commitment</th>
+                            <th>Announcement</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="emptyState" class="empty-state">
+                No rows added. Click "Add New Row" to start.
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-add-row" onclick="addNewRow()">+ Add New Row</button>
+        </div>
+
+        <div class="reported-by-section">
+            <label for="reportedBy">Reported By:</label>
+            <div class="reported-by-wrapper">
+                <select id="reportedBy">
+                    <option value="">Select name...</option>
+                </select>
+                <input type="text" id="reportedByManual" placeholder="Or type name...">
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button class="btn btn-submit" id="submitBtn" onclick="submitForm()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkQxPCmb7iAj07ZqBcWZAPjW2nTtd0pa6-85OCgezN9npzTJtnNnxgJ6s233o3Myk/exec'; // Replace with your deployed script URL
+
+        let teamMembers = [];
+        let roles = [];
+        let feelings = [];
+        let reportedByList = [];
+
+        // Initialize
+        async function initialize() {
+            try {
+                showAlert('Loading data...', 'warning');
+                const data = await fetchFromGoogleSheet('GET_INDEX_DATA');
+                
+                teamMembers = data.teamMembers || [];
+                roles = data.roles || [];
+                feelings = data.feelings || [];
+                reportedByList = data.teamMembers || [];
+
+                populateDropdowns();
+                hideAlert();
+            } catch (error) {
+                console.error('Initialization error:', error);
+                showAlert('Failed to load data. Please refresh the page.', 'error');
+            }
+        }
+
+        // Fetch from Google Apps Script
+        async function fetchFromGoogleSheet(action, payload = {}) {
+            if (SCRIPT_URL === 'YOUR_GOOGLE_APPS_SCRIPT_URL') {
+                showAlert('⚠️ Script URL not configured. Please set SCRIPT_URL in the code.', 'error');
+                throw new Error('Script URL not configured');
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action,
+                        ...payload
+                    })
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.message || 'Request failed');
+                }
+
+                return result.data;
+            } catch (error) {
+                console.error('Fetch error:', error);
+                throw error;
+            }
+        }
+
+        // Populate dropdowns
+        function populateDropdowns() {
+            const memberSelects = document.querySelectorAll('.member-select');
+            const roleSelects = document.querySelectorAll('.role-select');
+            const feelingSelects = document.querySelectorAll('.feeling-select');
+            const reportedBySelect = document.getElementById('reportedBy');
+
+            memberSelects.forEach(select => {
+                select.innerHTML = '<option value="">Select member...</option>';
+                teamMembers.forEach(member => {
+                    const option = document.createElement('option');
+                    option.value = member;
+                    option.textContent = member;
+                    select.appendChild(option);
+                });
+            });
+
+            roleSelects.forEach(select => {
+                select.innerHTML = '';
+                roles.forEach(role => {
+                    const option = document.createElement('option');
+                    option.value = role;
+                    option.textContent = role;
+                    select.appendChild(option);
+                });
+            });
+
+            feelingSelects.forEach(select => {
+                select.innerHTML = '';
+                feelings.forEach(feeling => {
+                    const option = document.createElement('option');
+                    option.value = feeling;
+                    option.textContent = feeling;
+                    select.appendChild(option);
+                });
+            });
+
+            reportedBySelect.innerHTML = '<option value="">Select name...</option>';
+            reportedByList.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                reportedBySelect.appendChild(option);
+            });
+        }
+
+        // Add new row
+        function addNewRow() {
+            const tbody = document.getElementById('tableBody');
+            const rowCount = tbody.children.length;
+            const rowId = 'row-' + Date.now();
+
+            const row = document.createElement('tr');
+            row.id = rowId;
+            row.innerHTML = `
+                <td>
+                    <select class="member-select" data-row="${rowId}">
+                        <option value="">Select...</option>
+                        ${teamMembers.map(m => `<option value="${m}">${m}</option>`).join('')}
+                    </select>
+                    <input type="text" class="member-manual" placeholder="Or type..." style="margin-top: 4px;">
+                </td>
+                <td>
+                    <select class="role-select" data-row="${rowId}">
+                        <option value="">Select...</option>
+                        ${roles.map(r => `<option value="${r}">${r}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <select class="feeling-select" data-row="${rowId}">
+                        <option value="">Select...</option>
+                        ${feelings.map(f => `<option value="${f}">${f}</option>`).join('')}
+                    </select>
+                </td>
+                <td>
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="resource-ready" data-row="${rowId}">
+                    </div>
+                </td>
+                <td>
+                    <textarea class="help-needed" placeholder="Type here..." data-row="${rowId}"></textarea>
+                </td>
+                <td>
+                    <textarea class="self-commitment" placeholder="Type here..." data-row="${rowId}"></textarea>
+                </td>
+                <td>
+                    <textarea class="announcement" placeholder="Type here..." data-row="${rowId}"></textarea>
+                </td>
+                <td>
+                    <button class="delete-btn" onclick="deleteRow('${rowId}')">Delete</button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        // Delete row
+        function deleteRow(rowId) {
+            const row = document.getElementById(rowId);
+            if (row) {
+                row.remove();
+                if (document.getElementById('tableBody').children.length === 0) {
+                    document.getElementById('emptyState').style.display = 'block';
+                }
+            }
+        }
+
+        // Submit form
+        async function submitForm() {
+            const submitBtn = document.getElementById('submitBtn');
+            const reportedBy = document.getElementById('reportedBy').value || 
+                              document.getElementById('reportedByManual').value;
+
+            // Validation
+            if (!reportedBy.trim()) {
+                showAlert('Please enter who is reporting.', 'error');
+                return;
+            }
+
+            const rows = document.querySelectorAll('#tableBody tr');
+            if (rows.length === 0) {
+                showAlert('Please add at least one row.', 'error');
+                return;
+            }
+
+            // Collect data
+            const entries = [];
+            let valid = true;
+
+            rows.forEach(row => {
+                const rowId = row.id;
+                const memberSelect = row.querySelector('.member-select').value;
+                const memberManual = row.querySelector('.member-manual').value;
+                const member = memberSelect || memberManual;
+
+                if (!member.trim()) {
+                    showAlert('Please fill in all Team Member fields.', 'error');
+                    valid = false;
+                    return;
+                }
+
+                const role = row.querySelector('.role-select').value;
+                const feeling = row.querySelector('.feeling-select').value;
+                const resourceReady = row.querySelector('.resource-ready').checked;
+                const helpNeeded = row.querySelector('.help-needed').value;
+                const selfCommitment = row.querySelector('.self-commitment').value;
+                const announcement = row.querySelector('.announcement').value;
+
+                entries.push({
+                    teamMember: member,
+                    role: role,
+                    feeling: feeling,
+                    resourceReady: resourceReady,
+                    helpNeeded: helpNeeded,
+                    selfCommitment: selfCommitment,
+                    announcement: announcement
+                });
+            });
+
+            if (!valid) return;
+
+            // Submit
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading-spinner"></span>Submitting...';
+
+            try {
+                const result = await fetchFromGoogleSheet('SAVE_ENTRY', {
+                    reportedBy: reportedBy.trim(),
+                    entries: entries
+                });
+
+                showAlert('✓ Submitted successfully!', 'success');
+                
+                // Clear form
+                setTimeout(() => {
+                    document.getElementById('tableBody').innerHTML = '';
+                    document.getElementById('reportedBy').value = '';
+                    document.getElementById('reportedByManual').value = '';
+                    document.getElementById('emptyState').style.display = 'block';
+                }, 1500);
+            } catch (error) {
+                console.error('Submit error:', error);
+                showAlert(error.message || 'Failed to submit. Please try again.', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Submit';
+            }
+        }
+
+        // Alert system
+        function showAlert(message, type = 'info') {
+            const alertEl = document.getElementById('alert');
+            alertEl.textContent = message;
+            alertEl.className = `alert show alert-${type}`;
+            
+            if (type === 'success' || type === 'warning') {
+                setTimeout(hideAlert, 4000);
+            }
+        }
+
+        function hideAlert() {
+            const alertEl = document.getElementById('alert');
+            alertEl.classList.remove('show');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initialize);
+    </script>
+</body>
+</html>
